@@ -64,7 +64,7 @@ class ImmuneChainTransform(SONManipulator):
             elif isinstance(value,dict):
                 son[key] = self.transform_incoming(value,collection)
         return son
-    
+
     def transform_outgoing(self,son,collection):
         for (key,value) in son.items():
             if isinstance(value,dict):

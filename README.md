@@ -13,6 +13,8 @@ Dependencies:
 
 * `scipy`
 
+* `biopython`
+
 * `matplotlib` (for figure generation)
 
 To install, first update the necessary paths in `params.py`.  Then,

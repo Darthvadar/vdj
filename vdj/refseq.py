@@ -25,26 +25,26 @@ from seqtools import FastaIterator
 import params
 
 # There are two ways to initialize the reference database:
-# 
+#
 #     1.  Reference IMGT set (used for IMGT/V-QUEST)
-#         
+#
 #         The set should be a FASTA file from the V-QUEST set, or formatted
 #         similarly.
-#     
+#
 #     2.  From your own set.  The data should be formatted as IMGT-flavored
 #         INSDC (i.e., Genbank/EMBL).
-#         
+#
 #         The set will trivially just transfer any annotation in the
 #         reference sequences.  This should, minimally, include the IMGT
 #         annotations for the CDR3 (2nd-CYS for V region and J-TRP or
 #         J-PHE for J region).
-# 
+#
 # The package will load the IMGT set by default.  The first time it loads the
 # IMGT set it will save an IMGT-INSDC-type file for each locus.
-# 
+#
 # If you want to load your own set, you can than do so afterwards and it will
 # override the IMGT set.  These are premade.
-# 
+#
 # Note that you should ensure params.organism is properly set before calling
 # refseq.
 
@@ -109,7 +109,7 @@ for reference_fasta in files_to_process:
     if ligm_index == None: ligm_index = SeqIO.index( os.path.join(params.imgt_dir,'imgt.dat'), 'imgt')
     group = get_group(reference_fasta)
     reference_imgt = os.path.join(processed_dir,group+'.imgt')
-    
+
     reference_records = []
     for record in SeqIO.parse(reference_fasta,'fasta'):
         #DEBUG
@@ -117,15 +117,15 @@ for reference_fasta in files_to_process:
         # if record.id == 'M62379|TRBV2*02|Homo':
         #     import pdb
         #     pdb.set_trace()
-        
+
         try:
             header_data = parse_imgt_fasta_header(record)
         except ValueError, e:
             print >>sys.stderr, "Problem with parsing fasta header\n%s\n%s" % (record.description,e)
             continue
-        
+
         imgt_record = ligm_index[header_data['accession']]
-        
+
         # prune down to the V-REGION annotated in V-QUEST fasta file
         reference_record = imgt_record[header_data['coords'][0]:header_data['coords'][1]]
         reference_feature = get_X_REGION_feature(reference_record,group[-1])
@@ -137,15 +137,15 @@ for reference_fasta in files_to_process:
             reference_feature.qualifiers['allele'] = [header_data['allele']]
         elif reference_feature.qualifiers['allele'][0] != header_data['allele']:
             warnings.warn("Reference record %s's %s is annotated %s while the corres. fasta header annotates it as %s.  I picked the LIGM version." % (reference_record.id,reference_feature.type,reference_feature.qualifiers['allele'][0],header_data['allele']))
-        
+
         # ensure that reference sequence has either 2nd-CYS, J-TRP, or J_PHE
         if group[-1] == 'V' and not has_CYS(reference_record):
             continue
         elif group[-1] == 'J' and not has_TRP_PHE(reference_record):
             continue
-        
+
         reference_records.append(reference_record)
-    
+
     SeqIO.write(reference_records,reference_imgt,'imgt')
 
 get_allele = lambda record: get_any_X_REGION_feature(record).qualifiers['allele'][0]
@@ -198,7 +198,7 @@ ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapp
 
 
 # DEPRECATED FUNCTIONS
-# 
+#
 # The functions below are deprecated, but are saved, since they implemented
 # some functionality that was complicated, and that I may reuse in the future.
 
@@ -207,12 +207,12 @@ ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapp
 
 # def pull_LIGM_record(self):
 #     """Get SeqRecord object for LIGM record from IMGT server"""
-#     
+#
 #     # NOTE: this can potentially be significantly simplified by accessing the URL
 #     # interface to LIGM, through:
 #     # http://imgt.cines.fr/cgi-bin/IMGTlect.jv?query=5+numacc
 #     # where numacc is the accession number
-#     
+#
 #     request = urllib2.Request('http://imgt.cines.fr/cgi-bin/IMGTlect.jv?livret=0')
 #     # LIGM page
 #     response = urllib2.urlopen(request)
@@ -233,7 +233,7 @@ ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapp
 #     request3 = form2.click(id='flatfile')
 #     # LIGM record results
 #     response3 = urllib2.urlopen(request3)
-# 
+#
 #     # ghetto parse of the results.  the text of the LIGM record is in <pre>...</pre> tags
 #     rawdata1 = response3.read()
 #     rawdata2 = rawdata1.split('<pre>')[1].split('</pre>')[0].lstrip()
@@ -250,22 +250,22 @@ ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapp
 #     Take the IMGT LIGM flat and fasta files, and return a fasta with only those seqs
 #     that have a specificity associated with them in a fasta file.  The header contains
 #     the accession and the specificity.
-#     
+#
 #     vdj.refseq.get_LIGM_with_specificities("imgt.dat","imgt.fasta","imgt.specificities.fasta","imgt.specificities.vdjxml")
 #     '''
 #     specificities = {}      # list of 2-tuples: (ACCESION,specificity)
 #     LIGMflat = open(os.path.join(refdatadir,imgtdat),'r')
 #     LIGMfasta = open(os.path.join(refdatadir,imgtfasta),'r')
 #     opSpecificityfasta = open(os.path.join(refdatadir,outputfasta),'w')
-#     
+#
 #     numRecords = 0
 #     numRecordswithSpec = 0
-#     
+#
 #     ID = ''
 #     DE = ''
 #     for line in LIGMflat:
 #         splitline = line.split()
-#         
+#
 #         if splitline[0] == 'ID':
 #             inRecord = True
 #             ID = splitline[1]
@@ -286,12 +286,12 @@ ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapp
 #                 ID = ''
 #                 DE = ''
 #                 inRecord = False
-#     
+#
 #     print "Number of LIGM records read: " + str(numRecords)
 #     print "Number of LIGM records that have specificities: " + str(numRecordswithSpec)
-#     
+#
 #     numFasta = 0
-#     
+#
 #     for seq in SeqIO.parse(LIGMfasta,'fasta'):
 #         spec = specificities.get(seq.id,'')
 #         if spec == '':
@@ -300,18 +300,18 @@ ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapp
 #             print >>opSpecificityfasta, ">" + seq.id + " | " + spec
 #             print >>opSpecificityfasta, seq.seq.tostring().upper()
 #             numFasta += 1
-#     
+#
 #     print "Number of Fasta records with specificities found and printed: " + str(numFasta)
-#     
+#
 #     LIGMflat.close()
 #     LIGMfasta.close()
 #     opSpecificityfasta.close()
-#     
+#
 #     # VDJXML and alignment
 #     rep = vdj.initial_import([os.path.join(refdatadir,outputfasta)],os.path.join(refdatadir,outputvdjxml),metatags=['specificity_reference : '+vdj.timestamp()])
 #     rep = vdj.positive_strand(rep)
 #     rep = vdj.align_rep(rep)
-#     
+#
 #     #repfiltered = rep.get_chains_fullVJ()
 #     repfiltered = rep
 #     for chain in repfiltered:
@@ -321,19 +321,19 @@ ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapp
 #             continue
 #         else:
 #             chain.add_tags( 'specificity|'+spec )
-#     
-#     vdj.writeVDJ(repfiltered,os.path.join(refdatadir,outputvdjxml)) 
-#     
+#
+#     vdj.writeVDJ(repfiltered,os.path.join(refdatadir,outputvdjxml))
+#
 #     return
-# 
-# 
+#
+#
 # if not os.path.exists(os.path.join(params.refdatadir,params.imgtspecfasta)) or not os.path.exists(os.path.join(params.refdatadir,params.imgtspecvdjxml)):
 #     get_LIGM_with_specificities(params.refdatadir,params.imgtdat,params.imgtfasta,params.imgtspecfasta,params.imgtspecvdjxml)
-# 
-# 
+#
+#
 # if os.path.exists(os.path.join(params.refdatadir,params.imgtspecfasta)) and os.path.exists(os.path.join(params.refdatadir,params.imgtspecvdjxml)):
 #     ipspecfasta = open(os.path.join(params.refdatadir,params.imgtspecfasta),'r')
-#     
+#
 #     SPEC_list = set()
 #     for line in ipspecfasta:
 #         if line[0] == '>':

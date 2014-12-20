@@ -1,11 +1,11 @@
 # base name for all final data files
-basename	
+basename
 
 
 # work directory
 # all work and results in this directory. Must be a unique name in the current
 # directory and not exist already
-work_dir	    
+work_dir
 
 
 # input files
@@ -19,17 +19,17 @@ short_queue	normal_serial
 long_queue	long_serial
 
 # analysis parameters
-min_size	
-max_size	
+min_size
+max_size
 packet_size	10000
-locus	
-locus	
+locus
+locus
 clustering_cutoff	4.5
 clustering_linkage	single
 
 
 # ###################################################
-# 
+#
 # derived output files
 # raw_vdjxml = basename+'.raw.vdjxml'
 # aligned_file = basename+'.aligned.vdjxml'
