@@ -16,7 +16,7 @@
 import sys
 import optparse
 
-import seqtools
+from ulutil import seqtools
 
 import vdj
 import vdj.pipeline

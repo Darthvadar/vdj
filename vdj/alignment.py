@@ -18,7 +18,7 @@ import copy
 import numpy as np
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
-import seqtools
+from ulutil import seqtools
 
 import vdj
 from vdj import refseq, alignmentcore

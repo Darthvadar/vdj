@@ -17,7 +17,7 @@ import sys
 import warnings
 import optparse
 
-import seqtools
+from ulutil import seqtools
 import vdj
 import vdj.pipeline
 

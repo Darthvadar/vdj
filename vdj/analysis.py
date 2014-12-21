@@ -22,7 +22,7 @@ import numpy as np
 # import matplotlib as mpl
 # import matplotlib.pyplot as plt
 
-import pyutils
+from ulutil import pyutils
 import vdj
 
 def iterator2countdict(iterable,features,count='read'):

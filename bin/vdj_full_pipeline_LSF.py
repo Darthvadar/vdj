@@ -21,8 +21,7 @@ import subprocess
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 
-import lsf
-import seqtools
+from ulutil import lsf, seqtools
 import vdj
 import vdj.pipeline
 

@@ -17,7 +17,7 @@ import sys
 import optparse
 
 import vdj
-import seqtools
+from ulutil import seqtools
 
 option_parser = optparse.OptionParser()
 option_parser.add_option('-f','--feature')

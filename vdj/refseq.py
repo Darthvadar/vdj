@@ -20,7 +20,7 @@ import warnings
 
 from Bio import SeqIO
 
-from seqtools import FastaIterator
+from ulutil.seqtools import FastaIterator
 
 import params
 

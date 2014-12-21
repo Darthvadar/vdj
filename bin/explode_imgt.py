@@ -17,7 +17,7 @@ import os
 import argparse
 
 import vdj
-from pyutils import cleanup_id
+from ulutil.pyutils import cleanup_id
 
 argparser = argparse.ArgumentParser(description=None)
 argparser.add_argument('input_file')

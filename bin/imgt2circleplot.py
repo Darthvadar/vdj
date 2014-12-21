@@ -23,7 +23,7 @@ import matplotlib.cm
 
 import vdj
 import vdj.analysis
-import scale
+from ulutil import scale
 
 option_parser = optparse.OptionParser()
 option_parser.add_option('-q','--quantify',choices=['clone','junction','read'])

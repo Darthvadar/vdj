@@ -23,7 +23,7 @@ import random
 import optparse
 import subprocess
 
-import statstools
+from ulutil import statstools
 import vdj
 
 option_parser = optparse.OptionParser()

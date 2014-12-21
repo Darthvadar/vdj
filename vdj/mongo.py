@@ -14,7 +14,7 @@
 
 import pymongo
 
-from seqtools import simplifySeqRecord, complicateSeqRecord
+from ulutil.seqtools import simplifySeqRecord, complicateSeqRecord
 from vdj import ImmuneChain
 
 def encode_chain(chain):

@@ -18,10 +18,10 @@ import warnings
 
 from Bio.Seq import Seq
 from Bio.Alphabet import DNAAlphabet
+from ulutil import seqtools
 
 import vdj
-import alignment
-import seqtools
+from vdj import alignment
 
 def parse_jobfile(filename):
     parameters = {}

@@ -17,10 +17,10 @@ import optparse
 import sys
 
 import numpy as np
+from ulutil import timeseries
 
 import vdj
 import vdj.analysis
-import timeseries
 
 option_parser = optparse.OptionParser()
 option_parser.add_option('-t','--times')

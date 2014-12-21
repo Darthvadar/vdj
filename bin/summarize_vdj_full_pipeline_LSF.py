@@ -18,7 +18,7 @@ import sys
 import glob
 import optparse
 
-import seqtools
+from ulutil import seqtools
 import subprocess
 
 join = os.path.join

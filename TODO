@@ -1,5 +1,0 @@
-Add option for local alignment instead of global alignment in the multialigner.  This requires full Smith-Waterman dynamic programming.
-
-Calibrate aligner
-
-Calibrate clustering

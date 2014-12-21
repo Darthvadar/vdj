@@ -35,7 +35,7 @@ def readme():
 
 setup(
     name='vdj',
-    version='0.2.0-dev',
+    version='2.0.0-dev',
     description='Python package for immune receptor sequence data',
     long_description=readme(),
     author='Uri Laserson',
