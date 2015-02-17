@@ -89,11 +89,11 @@ def has_TRP_PHE(record):
     return False
 
 
-ref_dir = os.path.join(params.vdj_dir,params.data_dir)
+ref_dir = params.data_dir
 ligm_index = None   # LIGM not loaded by default
 
 # figure out which files to process
-processed_dir = os.path.join(params.vdj_dir,params.processed_dir,params.organism)
+processed_dir = os.path.join(params.processed_dir, params.organism)
 if not os.path.exists(processed_dir):
     os.makedirs(processed_dir,mode=0755)
 
@@ -106,7 +106,7 @@ files_to_process = filter(lambda f: get_group(f) in groups_to_process,reference_
 
 # process those files
 for reference_fasta in files_to_process:
-    if ligm_index == None: ligm_index = SeqIO.index( os.path.join(params.imgt_dir,'imgt.dat'), 'imgt')
+    if ligm_index == None: ligm_index = SeqIO.index( os.path.join(params.imgt_dir,'imgt.dat'), 'imgt', key_function=lambda a: '.'.join(a.split('.')[:-1]))
     group = get_group(reference_fasta)
     reference_imgt = os.path.join(processed_dir,group+'.imgt')
 
@@ -171,24 +171,23 @@ TRGJ = dict([(get_allele(r),r) for r in SeqIO.parse(os.path.join(processed_dir,'
 ALL = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV,IGHD,IGHJ,IGKV,IGKJ,IGLV,IGLJ,TRBV,TRBD,TRBJ,TRAV,TRAJ,TRDV,TRDD,TRDJ,TRGV,TRGJ])
 
 # load gapped sequences
-data_dir = os.path.join(params.vdj_dir,params.data_dir)
-IGHV_gapped = dict(FastaIterator(os.path.join(data_dir,'IGHV.fasta'),lambda s: s.split('|')[1]))
-IGHD_gapped = dict(FastaIterator(os.path.join(data_dir,'IGHD.fasta'),lambda s: s.split('|')[1]))
-IGHJ_gapped = dict(FastaIterator(os.path.join(data_dir,'IGHJ.fasta'),lambda s: s.split('|')[1]))
-IGKV_gapped = dict(FastaIterator(os.path.join(data_dir,'IGKV.fasta'),lambda s: s.split('|')[1]))
-IGKJ_gapped = dict(FastaIterator(os.path.join(data_dir,'IGKJ.fasta'),lambda s: s.split('|')[1]))
-IGLV_gapped = dict(FastaIterator(os.path.join(data_dir,'IGLV.fasta'),lambda s: s.split('|')[1]))
-IGLJ_gapped = dict(FastaIterator(os.path.join(data_dir,'IGLJ.fasta'),lambda s: s.split('|')[1]))
-TRBV_gapped = dict(FastaIterator(os.path.join(data_dir,'TRBV.fasta'),lambda s: s.split('|')[1]))
-TRBD_gapped = dict(FastaIterator(os.path.join(data_dir,'TRBD.fasta'),lambda s: s.split('|')[1]))
-TRBJ_gapped = dict(FastaIterator(os.path.join(data_dir,'TRBJ.fasta'),lambda s: s.split('|')[1]))
-TRAV_gapped = dict(FastaIterator(os.path.join(data_dir,'TRAV.fasta'),lambda s: s.split('|')[1]))
-TRAJ_gapped = dict(FastaIterator(os.path.join(data_dir,'TRAJ.fasta'),lambda s: s.split('|')[1]))
-TRDV_gapped = dict(FastaIterator(os.path.join(data_dir,'TRDV.fasta'),lambda s: s.split('|')[1]))
-TRDD_gapped = dict(FastaIterator(os.path.join(data_dir,'TRDD.fasta'),lambda s: s.split('|')[1]))
-TRDJ_gapped = dict(FastaIterator(os.path.join(data_dir,'TRDJ.fasta'),lambda s: s.split('|')[1]))
-TRGV_gapped = dict(FastaIterator(os.path.join(data_dir,'TRGV.fasta'),lambda s: s.split('|')[1]))
-TRGJ_gapped = dict(FastaIterator(os.path.join(data_dir,'TRGJ.fasta'),lambda s: s.split('|')[1]))
+IGHV_gapped = dict(FastaIterator(os.path.join(ref_dir,'IGHV.fasta'),lambda s: s.split('|')[1]))
+IGHD_gapped = dict(FastaIterator(os.path.join(ref_dir,'IGHD.fasta'),lambda s: s.split('|')[1]))
+IGHJ_gapped = dict(FastaIterator(os.path.join(ref_dir,'IGHJ.fasta'),lambda s: s.split('|')[1]))
+IGKV_gapped = dict(FastaIterator(os.path.join(ref_dir,'IGKV.fasta'),lambda s: s.split('|')[1]))
+IGKJ_gapped = dict(FastaIterator(os.path.join(ref_dir,'IGKJ.fasta'),lambda s: s.split('|')[1]))
+IGLV_gapped = dict(FastaIterator(os.path.join(ref_dir,'IGLV.fasta'),lambda s: s.split('|')[1]))
+IGLJ_gapped = dict(FastaIterator(os.path.join(ref_dir,'IGLJ.fasta'),lambda s: s.split('|')[1]))
+TRBV_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRBV.fasta'),lambda s: s.split('|')[1]))
+TRBD_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRBD.fasta'),lambda s: s.split('|')[1]))
+TRBJ_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRBJ.fasta'),lambda s: s.split('|')[1]))
+TRAV_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRAV.fasta'),lambda s: s.split('|')[1]))
+TRAJ_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRAJ.fasta'),lambda s: s.split('|')[1]))
+TRDV_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRDV.fasta'),lambda s: s.split('|')[1]))
+TRDD_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRDD.fasta'),lambda s: s.split('|')[1]))
+TRDJ_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRDJ.fasta'),lambda s: s.split('|')[1]))
+TRGV_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRGV.fasta'),lambda s: s.split('|')[1]))
+TRGJ_gapped = dict(FastaIterator(os.path.join(ref_dir,'TRGJ.fasta'),lambda s: s.split('|')[1]))
 ALL_gapped = reduce(lambda a,b: dict(a.items()+b.items()),[IGHV_gapped,IGHD_gapped,IGHJ_gapped,IGKV_gapped,IGKJ_gapped,IGLV_gapped,IGLJ_gapped,TRBV_gapped,TRBD_gapped,TRBJ_gapped,TRAV_gapped,TRAJ_gapped,TRDV_gapped,TRDD_gapped,TRDJ_gapped,TRGV_gapped,TRGJ_gapped])
 
 

@@ -1,4 +1,5 @@
-This is the reference datasets used by IMGT/VQUEST.  These files can be accessed at the following URLs:
+This is the reference datasets used by IMGT/VQUEST.  These files can be
+accessed at the following URLs:
 
     http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.14+IGHV&species=Homo+sapiens
     http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.14+IGHD&species=Homo+sapiens

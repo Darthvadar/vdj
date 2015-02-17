@@ -23,33 +23,31 @@ import warnings
 
 warnings.simplefilter('always')
 
-def parse_config_file(path=os.path.expanduser('~/.vdjconfig')):
+if os.path.isfile(os.path.expanduser('~/.vdjconfig.json')):
+    with open(os.path.expanduser('~/.vdjconfig.json'), 'r') as ip:
+        config_data = json.load(ip)
+else:
     config_data = {}
-    ip = open(path,'r')
-    for line in ip:
-        if line.startswith('#') or line.strip() == '': continue
-        data = map(lambda s: s.strip(),line.split('\t'))
-        config_data[data[0]] = data[1]
-    ip.close()
-    return config_data
-
-config_data = parse_config_file()
 
 # locate some directories
-try:
-    vdj_dir = config_data['vdj_dir']
-except KeyError:
-    print "Could not successfully set vdj_dir.  Does ~/.vdjconfig exist?"
-    raise
+vdj_dir = os.path.dirname(os.path.abspath(__file__))
 
-try:
+if 'IMGT_DIR' in os.environ:
+    imgt_dir = os.environ['IMGT_DIR']
+elif 'imgt_dir' in config_data:
     imgt_dir = config_data['imgt_dir']
-except KeyError:
-    warning.warn("Could not find imgt_dir in .vdjconfig. May cause problems loading refseq.")
-
-# define some other directories and variables
-data_dir = 'data'
-processed_dir = 'processed'
+else:
+    warning.warn("Could not load value for imgt_dir. May cause problems loading refseq.")
 
 # define organism of refseq data
 organism = 'human'
+
+# define some other directories and variables
+data_dir = os.path.join(vdj_dir, 'data')
+
+if 'VDJ_PROCESSED_DIR' in os.environ:
+    processed_dir = os.environ['VDJ_PROCESSED_DIR']
+elif 'processed_dir' in config_data:
+    processed_dir = config_data['processed_dir']
+else:
+    processed_dir = os.path.join(vdj_dir, 'processed')
