@@ -60,16 +60,16 @@ class vdj_aligner(object):
         self.locus = kw['locus']
 
         self.refV = refseq.__getattribute__(self.locus+'V')
-        refV_seqs = dict([(allele,record.seq.tostring()) for (allele,record) in self.refV.iteritems()])
+        refV_seqs = dict([(allele,str(record.seq)) for (allele,record) in self.refV.iteritems()])
         self.Vseqlistkeys = vdj_aligner.seqdict2kmers( refV_seqs, self.seedpatterns )
 
         self.refJ = refseq.__getattribute__(self.locus+'J')
-        refJ_seqs = dict([(allele,record.seq.tostring()) for (allele,record) in self.refJ.iteritems()])
+        refJ_seqs = dict([(allele,str(record.seq)) for (allele,record) in self.refJ.iteritems()])
         self.Jseqlistkeys = vdj_aligner.seqdict2kmers( refJ_seqs, self.seedpatterns )
 
         try:    # this locus may not have D segments
             self.refD = refseq.__getattribute__(self.locus+'D')
-            refD_seqs = dict([(allele,record.seq.tostring()) for (allele,record) in self.refD.iteritems()])
+            refD_seqs = dict([(allele,str(record.seq)) for (allele,record) in self.refD.iteritems()])
             self.Dseqlistkeysmini = vdj_aligner.seqdict2kmers( refD_seqs, self.miniseedpatterns )
         except AttributeError:
             pass
@@ -103,22 +103,22 @@ class vdj_aligner(object):
 
     def Valign_chain(self,chain,verbose=False):
         # compute hashes from query seq
-        querykeys = vdj_aligner.seq2kmers(chain.seq.tostring(),self.seedpatterns)
+        querykeys = vdj_aligner.seq2kmers(str(chain.seq),self.seedpatterns)
 
         # for each reference V segment and each pattern, how many shared k-mers are there?
         Vscores_hash = vdj_aligner.hashscore(self.Vseqlistkeys,querykeys)
 
         # get numCrudeVCandidates highest scores in Vscores and store their names in descending order
         goodVseglist = sorted(self.refV.keys(),key=lambda k: Vscores_hash[k],reverse=True)[0:self.numCrudeVCandidates]
-        goodVsegdict = dict([(seg,self.refV[seg].seq.tostring()) for seg in goodVseglist])
+        goodVsegdict = dict([(seg,str(self.refV[seg].seq)) for seg in goodVseglist])
 
         # Needleman-Wunsch of V segment
-        (bestVseg,bestVscore,bestVscoremat,bestVtracemat) = vdj_aligner.bestalignNW(goodVsegdict,chain.seq.tostring(),self.minVscore)
+        (bestVseg,bestVscore,bestVscoremat,bestVtracemat) = vdj_aligner.bestalignNW(goodVsegdict,str(chain.seq),self.minVscore)
 
         # if successful alignment
         if bestVseg is not None:
             # copy features from ref to query
-            Vrefaln,Vqueryaln = vdj_aligner.construct_alignment( self.refV[bestVseg].seq.tostring(), chain.seq.tostring(), bestVscoremat, bestVtracemat )
+            Vrefaln,Vqueryaln = vdj_aligner.construct_alignment( str(self.refV[bestVseg].seq), str(chain.seq), bestVscoremat, bestVtracemat )
             coord_mapping = vdj_aligner.ungapped_coord_mapping(Vrefaln, Vqueryaln)
             seqtools.copy_features(self.refV[bestVseg], chain, coord_mapping, erase=['translation'], replace=False)
 
@@ -158,9 +158,9 @@ class vdj_aligner(object):
         try:
             second_cys = chain.__getattribute__('2nd-CYS')
             second_cys_offset = second_cys.location.end.position
-            query = chain.seq.tostring()[second_cys_offset:]
+            query = str(chain.seq)[second_cys_offset:]
         except AttributeError:
-            query = chain.seq.tostring()
+            query = str(chain.seq)
             second_cys_offset = 0
 
         # compute hashes from query seq
@@ -171,7 +171,7 @@ class vdj_aligner(object):
 
         # get numCrudeJCandidates highest scores in Jscores and store their names in descending order
         goodJseglist = sorted(self.refJ.keys(),key=lambda k: Jscores_hash[k],reverse=True)[0:self.numCrudeJCandidates]
-        goodJsegdict = dict([(seg,self.refJ[seg].seq.tostring()) for seg in goodJseglist])
+        goodJsegdict = dict([(seg,str(self.refJ[seg].seq)) for seg in goodJseglist])
 
         # Needleman-Wunsch of J segment
         (bestJseg,bestJscore,bestJscoremat,bestJtracemat) = vdj_aligner.bestalignNW(goodJsegdict,query,self.minJscore)
@@ -179,7 +179,7 @@ class vdj_aligner(object):
         # if successful alignment
         if bestJseg is not None:
             # copy features from ref to query
-            Jrefaln,Jqueryaln = vdj_aligner.construct_alignment( self.refJ[bestJseg].seq.tostring(), query, bestJscoremat, bestJtracemat )
+            Jrefaln,Jqueryaln = vdj_aligner.construct_alignment( str(self.refJ[bestJseg].seq), query, bestJscoremat, bestJtracemat )
             coord_mapping = vdj_aligner.ungapped_coord_mapping(Jrefaln, Jqueryaln)
             seqtools.copy_features(self.refJ[bestJseg], chain, coord_mapping, offset=second_cys_offset, erase=['translation'], replace=False)
             chain._update_feature_dict()
@@ -187,7 +187,7 @@ class vdj_aligner(object):
             # update gapped aln
             gapped_query = chain.annotations.get('gapped_query','')
             gapped_reference = chain.annotations.get('gapped_reference','')
-            gapped_CDR3_offset = vdj_aligner.ungapped2gapped_coord(chain.seq.tostring(),gapped_query,second_cys_offset)
+            gapped_CDR3_offset = vdj_aligner.ungapped2gapped_coord(str(chain.seq),gapped_query,second_cys_offset)
             gapped_Vref_aln_end = len(gapped_reference.rstrip('-'))
             chain.annotations['gapped_query'] = gapped_query[:gapped_Vref_aln_end] + Jqueryaln[gapped_Vref_aln_end-gapped_CDR3_offset:]
             chain.annotations['gapped_reference'] = gapped_reference[:gapped_Vref_aln_end] + Jrefaln[gapped_Vref_aln_end-gapped_CDR3_offset:]
@@ -217,7 +217,7 @@ class vdj_aligner(object):
 
         # get numCrudeJCandidates highest scores in Jscores and store their names in descending order
         goodDseglist = sorted(self.refD.keys(),key=lambda k: Dscores_hash[k],reverse=True)[0:self.numCrudeDCandidates]
-        goodDsegdict = dict([(seg,self.refD[seg].seq.tostring()) for seg in goodDseglist])
+        goodDsegdict = dict([(seg,str(self.refD[seg].seq)) for seg in goodDseglist])
 
         # Needleman-Wunsch of J segment
         (bestDseg,bestDscore,bestDscoremat,bestDtracemat) = vdj_aligner.bestalignSW(goodDsegdict,query,self.minDscore)
@@ -251,7 +251,7 @@ class vdj_aligner(object):
             import pdb
             pdb.set_trace()
 
-        if chain.seq.tostring() != chain.seq.tostring().upper():
+        if str(chain.seq) != str(chain.seq).upper():
             raise ValueError, "aligner requires all uppercase alphabet."
 
         if not chain.has_tag('positive') and not chain.has_tag('coding'):
@@ -292,7 +292,7 @@ class vdj_aligner(object):
 
 
     def coding_chain(self,chain,verbose=False):
-        strand = self.seq2coding(chain.seq.tostring())
+        strand = self.seq2coding(str(chain.seq))
         if strand == -1:
             chain.seq = chain.seq.reverse_complement()
             chain.add_tag('revcomp')
@@ -454,10 +454,10 @@ class vdj_aligner(object):
         except AttributeError:
             ungapped_cdr3_end = chain.__getattribute__('J-TRP').location.start.position
 
-        gapped_v_start = vdj.alignment.vdj_aligner.ungapped2gapped_coord(chain.seq.tostring(), gapped_query, ungapped_v_start)
-        gapped_j_end = vdj.alignment.vdj_aligner.ungapped2gapped_coord(chain.seq.tostring(), gapped_query, ungapped_j_end)
-        gapped_cdr3_start = vdj.alignment.vdj_aligner.ungapped2gapped_coord(chain.seq.tostring(), gapped_query, ungapped_cdr3_start)
-        gapped_cdr3_end = vdj.alignment.vdj_aligner.ungapped2gapped_coord(chain.seq.tostring(), gapped_query, ungapped_cdr3_end)
+        gapped_v_start = vdj.alignment.vdj_aligner.ungapped2gapped_coord(str(chain.seq), gapped_query, ungapped_v_start)
+        gapped_j_end = vdj.alignment.vdj_aligner.ungapped2gapped_coord(str(chain.seq), gapped_query, ungapped_j_end)
+        gapped_cdr3_start = vdj.alignment.vdj_aligner.ungapped2gapped_coord(str(chain.seq), gapped_query, ungapped_cdr3_start)
+        gapped_cdr3_end = vdj.alignment.vdj_aligner.ungapped2gapped_coord(str(chain.seq), gapped_query, ungapped_cdr3_end)
 
         masked_annot = '_' * gapped_v_start + \
                        gapped_annot[gapped_v_start:gapped_cdr3_start] + \
@@ -474,7 +474,7 @@ class vdj_aligner(object):
             s.append("%s    %s" % (masked_annot, 'masked_annot'))
             s.append(' ' * (gapped_v_start-1) + '/' + ' ' * (gapped_cdr3_start-gapped_v_start-1) + '/' + ' ' * (gapped_cdr3_end-gapped_cdr3_start-1) + '/' + ' ' * (gapped_j_end-gapped_cdr3_end-1) + '/')
             s.append('')
-            s.append(chain.seq.tostring())
+            s.append(str(chain.seq))
             s.append(chain.letter_annotations['alignment'])
             print '\n'.join(s)
 
@@ -641,7 +641,7 @@ class vdj_aligner_combined(object):
             return alignments[0][1]     # NOTE: I only return the scores upon successful aln
 
     def coding_chain(self,chain,verbose=False):
-        strand = self.seq2coding(chain.seq.tostring())
+        strand = self.seq2coding(str(chain.seq))
         if strand == -1:
             chain.seq = chain.seq.reverse_complement()
             chain.add_tag('revcomp')
